@@ -1,5 +1,6 @@
 import tkinter
 from tkinter import *
+import password_generator
 
 # -------------------- UI setup -------------------- #
 root_window = Tk()
@@ -43,15 +44,32 @@ def on_check_custom():
         custom_char_entry.grid_remove()
 
 
+def generate_password_and_fill():
+    custom_chars: str
+    if custom_var.get():
+        custom_chars = custom_char_entry.get()
+    else:
+        custom_chars = ""
+    password = password_generator.generate_password(
+        lowercase=lowercase_var.get(),
+        uppercase=uppercase_var.get(),
+        number=number_var.get(),
+        custom_chars=custom_chars,
+        required_length=required_length.get()
+    )
+    password_entry.delete(0, END)
+    password_entry.insert(END, password)
+
+
 factory_label_frame = LabelFrame(root_window, text="Factory")
 factory_label_frame.grid(row=0, column=1, padx=40)
 
 Label(factory_label_frame, text="Use:").grid(row=0, column=0, sticky=tkinter.E)
 Label(factory_label_frame, text="Length:").grid(row=5, column=0, sticky=tkinter.E)
-lowercase_var = IntVar(value=1)
-uppercase_var = IntVar(value=1)
-number_var = IntVar(value=1)
-custom_var = IntVar(value=0)
+lowercase_var = BooleanVar(value=True)
+uppercase_var = BooleanVar(value=True)
+number_var = BooleanVar(value=True)
+custom_var = BooleanVar(value=False)
 Checkbutton(factory_label_frame, text="Lowercase", variable=lowercase_var).grid(row=0, column=1, sticky=tkinter.W)
 Checkbutton(factory_label_frame, text="Uppercase", variable=uppercase_var).grid(row=1, column=1, sticky=tkinter.W)
 Checkbutton(factory_label_frame, text="Number", variable=number_var).grid(row=2, column=1, sticky=tkinter.W)
@@ -60,11 +78,11 @@ Checkbutton(factory_label_frame, text="Custom", variable=custom_var, command=on_
 custom_char_entry = Entry(factory_label_frame, width=10)
 custom_char_entry.insert(END, "@,.!?#")
 on_check_custom()
-current_value = tkinter.StringVar(value="10")
-length_spinbox = tkinter.Spinbox(factory_label_frame, from_=1, to=50, textvariable=current_value, wrap=True, width=2)
+required_length = tkinter.IntVar(value=10)
+length_spinbox = tkinter.Spinbox(factory_label_frame, from_=4, to=50, textvariable=required_length, wrap=True, width=2)
 length_spinbox.grid(row=5, column=1, sticky=tkinter.W, pady=8)
 
-generate_button = Button(factory_label_frame, text="Generate")
+generate_button = Button(factory_label_frame, text="Generate", command=generate_password_and_fill)
 generate_button.grid(row=6, columnspan=2, sticky=tkinter.EW, padx=40, pady=20)
 
 
