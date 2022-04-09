@@ -6,7 +6,6 @@ from persistent_read import CLEAR_TEXT_PWD_FILE_NAME
 
 
 def save(website: str, username: str, password: str):
-    # TODO: Should treat 'taobao' and 'Taobao' as the same website, instead of creating 2 items
     item_data = {
         website: {
             "username": username,
@@ -15,7 +14,16 @@ def save(website: str, username: str, password: str):
     }
     try:
         if exists(CLEAR_TEXT_PWD_FILE_NAME):
-            existing_dict = persistent_read.read()
+            existing_dict: dict = persistent_read.read()
+            existing_keys = existing_dict.keys()
+            for key in existing_keys:
+                if key.lower() == website.lower():
+                    existing_dict[key]["username"] = username
+                    existing_dict[key]["password"] = password
+                    write_into_file(existing_dict)
+
+                    return
+
             existing_dict.update(item_data)
             write_into_file(existing_dict)
         else:

@@ -92,6 +92,7 @@ website_var.trace("w", on_website_input_changed)
 username_var.trace("w", on_username_input_changed)
 password_var.trace("w", on_password_input_changed)
 # TODO: Command + DEL, ALT + DEL don't work
+# TODO: TAB, ENTER Hardware key don't work
 Entry(warehouse_label_frame, textvariable=website_var).grid(row=0, column=1, sticky=EW, padx=8)
 Entry(warehouse_label_frame, textvariable=username_var).grid(row=1, column=1, columnspan=2, sticky=EW, padx=8)
 password_entry = Entry(warehouse_label_frame, textvariable=password_var)
