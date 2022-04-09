@@ -3,6 +3,7 @@ from tkinter import *
 
 import pyperclip
 
+import cryptography_related
 import matched_result_popup
 import password_generator
 import persistent_read
@@ -63,9 +64,11 @@ def on_search_tapped():
     result = {}
     for key in dictionary.keys():
         if re.search(website_var.get(), key, re.IGNORECASE):
+            pwd_bytes = dictionary[key]["password"].encode()
+            decrypted_pwd_bytes = cryptography_related.password_decrypt(pwd_bytes, cryptography_related.MASTER_PASSWORD)
             result[key] = {
                 "username": dictionary[key]["username"],
-                "password": dictionary[key]["password"]
+                "password": decrypted_pwd_bytes.decode("utf-8")
             }
     matched_result_num = len(result.keys())
     if matched_result_num == 0:
