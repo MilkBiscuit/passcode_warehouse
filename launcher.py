@@ -1,7 +1,7 @@
 import re
 from tkinter import *
 
-# import pyperclip
+import pyperclip
 
 import matched_result_popup
 import password_generator
@@ -10,8 +10,6 @@ import persistent_write
 from ui_constants import PROMPT_WEBSITE, PROMPT_PASSWORD, PROMPT_USERNAME
 
 # -------------------- UI setup -------------------- #
-# TODO: can not distribute with pyperclip
-# TODO: add custom app icon
 root_window = Tk()
 root_window.title("Passcode Warehouse")
 root_window.config(padx=40, pady=40)
@@ -20,7 +18,7 @@ root_window.config(padx=40, pady=40)
 # --- Warehouse --- #
 def copy_password_into_clipboard():
     password = password_entry.get()
-    # pyperclip.copy(password)
+    pyperclip.copy(password)
 
 
 def set_store_button_state():
