@@ -1,19 +1,29 @@
-import re
 from tkinter import *
+from tkinter import simpledialog
 
 import pyperclip
 
-import cryptography_related
 import matched_result_popup
-import password_generator
 import persistent_read
 import persistent_write
-from ui_constants import PROMPT_WEBSITE, PROMPT_PASSWORD, PROMPT_USERNAME
+from password_generator import generate_password
+from ui_constants import *
 
 # -------------------- UI setup -------------------- #
 root_window = Tk()
 root_window.title("Passcode Warehouse")
 root_window.config(padx=40, pady=40)
+
+
+# --- Input Dialog --- #
+def pop_dialog_to_ask_backup_passcode():
+    backup_passcode = simpledialog.askstring(title=DIALOG_TITLE_INPUT_YOUR_BACKUP_PWD,
+                                             prompt=DIALOG_MESSAGE_INPUT_YOUR_BACKUP_PWD,
+                                             parent=root_window)
+    if backup_passcode is None or len(backup_passcode) == 0:
+        print("The user didn't set a passcode")
+    else:
+        persistent_write.save_user_backup_passcode(backup_passcode)
 
 
 # --- Warehouse --- #
@@ -53,6 +63,11 @@ def on_password_input_changed(*args):
 
 
 def on_store():
+    # TODO: Have some check to avoid being stuck at the endless input dialog
+    if persistent_read.read_user_backup_passcode() == "":
+        pop_dialog_to_ask_backup_passcode()
+        return
+
     persistent_write.save(website_var.get(), username_var.get(), password_var.get())
     website_var.set("")
     username_var.set("")
@@ -60,16 +75,7 @@ def on_store():
 
 
 def on_search_tapped():
-    dictionary: dict = persistent_read.read()
-    result = {}
-    for key in dictionary.keys():
-        if re.search(website_var.get(), key, re.IGNORECASE):
-            pwd_bytes = dictionary[key]["password"].encode()
-            decrypted_pwd_bytes = cryptography_related.password_decrypt(pwd_bytes, cryptography_related.MASTER_PASSWORD)
-            result[key] = {
-                "username": dictionary[key]["username"],
-                "password": decrypted_pwd_bytes.decode("utf-8")
-            }
+    result = persistent_read.search_matched_results(website_var.get())
     matched_result_num = len(result.keys())
     if matched_result_num == 0:
         pass
@@ -79,6 +85,8 @@ def on_search_tapped():
         password_var.set(result[website_key]["password"])
     else:
         matched_result_popup.show(root_window, result)
+        username_var.set("")
+        password_var.set("")
 
 
 warehouse_label_frame = LabelFrame(root_window, text="Warehouse")
@@ -128,7 +136,7 @@ def generate_passcode_and_fill():
         custom_chars = custom_char_entry.get()
     else:
         custom_chars = ""
-    password = password_generator.generate_password(
+    password = generate_password(
         lowercase=lowercase_var.get(),
         uppercase=uppercase_var.get(),
         number=number_var.get(),

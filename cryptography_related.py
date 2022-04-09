@@ -8,18 +8,28 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 backend = default_backend()
 DEFAULT_ITERATION_NUM = 10_000
-# TODO: Should let user input the master password
-MASTER_PASSWORD = "123456"
 
 
-def _derive_key(pwd: bytes, salt: bytes, iteration_num: int = DEFAULT_ITERATION_NUM) -> bytes:
+def password_encrypt(msg: str, pwd: str, iteration_num: int = DEFAULT_ITERATION_NUM) -> str:
+    encrypted_msg_bytes = _password_encrypt(msg.encode(), pwd, iteration_num)
+
+    return encrypted_msg_bytes.decode()
+
+
+def password_decrypt(encrypted_msg: str, pwd: str) -> str:
+    decrypted_bytes = _password_decrypt(encrypted_msg.encode(), pwd)
+
+    return decrypted_bytes.decode()
+
+
+def _derive_key(pwd: bytes, salt: bytes, iteration_num: int) -> bytes:
     # Derive a secret key from a given password and salt
     kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt,
                      iterations=iteration_num, backend=backend)
     return b64e(kdf.derive(pwd))
 
 
-def password_encrypt(msg: bytes, pwd: str, iteration_num: int = DEFAULT_ITERATION_NUM) -> bytes:
+def _password_encrypt(msg: bytes, pwd: str, iteration_num: int) -> bytes:
     salt = secrets.token_bytes(16)
     key = _derive_key(pwd.encode(), salt, iteration_num)
     return b64e(
@@ -31,7 +41,7 @@ def password_encrypt(msg: bytes, pwd: str, iteration_num: int = DEFAULT_ITERATIO
     )
 
 
-def password_decrypt(token_bytes: bytes, pwd: str) -> bytes:
+def _password_decrypt(token_bytes: bytes, pwd: str) -> bytes:
     decoded = b64d(token_bytes)
     salt, iteration_num, token_bytes = decoded[:16], decoded[16:20], b64e(decoded[20:])
     iterations = int.from_bytes(iteration_num, 'big')

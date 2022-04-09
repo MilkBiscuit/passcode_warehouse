@@ -133,3 +133,4 @@ dmypy.json
 
 # Temp files
 clear_text_password.json
+backup_passcode.json

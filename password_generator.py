@@ -19,7 +19,7 @@ def generate_password(lowercase: bool, uppercase: bool, number: bool, custom_cha
     if len(custom_chars) > 0:
         temp_password += choice(custom_chars)
     while len(temp_password) < required_length:
-        temp_password += generate_next_char(lowercase, uppercase, number, custom_chars)
+        temp_password += _generate_next_char(lowercase, uppercase, number, custom_chars)
     character_list = []
     character_list[:0] = temp_password
     shuffle(character_list)
@@ -27,7 +27,7 @@ def generate_password(lowercase: bool, uppercase: bool, number: bool, custom_cha
     return "".join(character_list)
 
 
-def generate_next_char(lowercase: bool, uppercase: bool, number: bool, custom_chars: str) -> chr:
+def _generate_next_char(lowercase: bool, uppercase: bool, number: bool, custom_chars: str) -> chr:
     has_custom_char = len(custom_chars) > 0
     type_list = ""
     # Lowercase letters have much higher weight
@@ -48,14 +48,4 @@ def generate_next_char(lowercase: bool, uppercase: bool, number: bool, custom_ch
         return choice(custom_chars)
     else:
         return choice(LOWERCASE_LETTERS)
-
-
-# -------------------- Test -------------------- #
-def __generate_a_list_of_passwords():
-    for i in range(20):
-        result = generate_password(lowercase=True, uppercase=True, number=True, custom_chars="@#", required_length=8)
-        print(result)
-
-
-# __generate_a_list_of_passwords()
 

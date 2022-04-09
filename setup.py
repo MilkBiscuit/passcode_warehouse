@@ -10,7 +10,11 @@ from setuptools import setup
 APP = ['launcher.py']
 DATA_FILES = []
 OPTIONS = {
-    'includes': ["pyperclip"],
+    'includes': [
+        "pyperclip",
+        "cffi",
+        "cryptography",
+    ],
     'iconfile': "resources/passcode_folder.icns",
     'plist': "Info.plist"
 }

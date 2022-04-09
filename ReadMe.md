@@ -13,6 +13,14 @@ I am not a fan of LastPass, I'd rather save the password of some rarely-used acc
 Just recently, I found it's extremely easy to make a desktop App via Python, so here it is, **Passcode Warehouse**, the local, offline version of LastPass.
 
 
+# Passcode Warehouse
+I've tried as best as I can to make the GUI design self-explanatory.
+## Screenshots
+
+## Data storage encryption
+Passwords have been encrypted already before saving into file. The JSON file data saved on your local machine looks like this:
+
+[//]: # (TODO: Wait for the whole UI complete)
 
 # Read More
 [Password rules are bullshit](https://blog.codinghorror.com/password-rules-are-bullshit/)
