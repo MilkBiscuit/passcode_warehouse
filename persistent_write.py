@@ -1,10 +1,11 @@
 import json
+import os
+import typing
 from os.path import exists
 
 import cryptography_related
 import persistent_read
-from persistent_read import CLEAR_TEXT_PWD_FILE_NAME, BACKUP_PASSCODE_FILE_NAME, PASSCODE_WAREHOUSE,\
-    PASSCODE_WAREHOUSE_USERNAME, PWD_TO_ENCRYPT_BACKUP_PASSCODE
+from persistent_constants import *
 
 
 def save(website: str, username: str, password: str):
@@ -19,6 +20,17 @@ def save_user_backup_passcode(passcode: str):
     )
     encrypted_pwd = cryptography_related.password_encrypt(passcode, PWD_TO_ENCRYPT_BACKUP_PASSCODE)
     _save(PASSCODE_WAREHOUSE, encrypted_username, encrypted_pwd, BACKUP_PASSCODE_FILE_NAME)
+
+
+def export_credentials(writing_file: typing.IO):
+    data = persistent_read.read(CLEAR_TEXT_PWD_FILE_NAME)
+    json.dump(data, writing_file, indent=4)
+    writing_file.close()
+
+
+def clear_all_credentials():
+    if exists(CLEAR_TEXT_PWD_FILE_NAME):
+        os.remove(CLEAR_TEXT_PWD_FILE_NAME)
 
 
 def _save(website: str, username: str, encrypted_pwd_str: str, file_name: str):

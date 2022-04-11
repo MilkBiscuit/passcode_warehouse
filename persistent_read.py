@@ -1,14 +1,12 @@
 import json
 import re
+import typing
 from os.path import exists
 
 import cryptography_related
+import persistent_write
+from persistent_constants import *
 
-CLEAR_TEXT_PWD_FILE_NAME = "clear_text_password.json"
-BACKUP_PASSCODE_FILE_NAME = "backup_passcode.json"
-PASSCODE_WAREHOUSE = "Passcode Warehouse"
-PASSCODE_WAREHOUSE_USERNAME = "NA"
-PWD_TO_ENCRYPT_BACKUP_PASSCODE = "P@ssw0rd"
 user_backup_passcode = ""
 
 
@@ -28,7 +26,7 @@ def read_user_backup_passcode() -> str:
     if user_backup_passcode != "":
         return user_backup_passcode
 
-    matched_result = _search_matched_results(PASSCODE_WAREHOUSE, BACKUP_PASSCODE_FILE_NAME)
+    matched_result = _search_matched_results(PASSCODE_WAREHOUSE, read(BACKUP_PASSCODE_FILE_NAME))
     matched_num = len(matched_result.keys())
     if matched_num == 1:
         if PASSCODE_WAREHOUSE_USERNAME == cryptography_related.password_decrypt(
@@ -43,34 +41,44 @@ def read_user_backup_passcode() -> str:
             print("Decryption of backup passcode failed.")
     else:
         print("Expect backup passcode num: 1, but actual num:", matched_num)
-
     user_backup_passcode = ""
     return user_backup_passcode
 
 
-def search_matched_results(website_keyword: str) -> dict:
+def import_credentials(reading_file: typing.IO, passcode: str) -> Exception | None:
+    try:
+        imported_dictionary = json.load(reading_file)
+        decrypted_credentials = _decrypt_password_fields(imported_dictionary, passcode)
+        no_backup_passcode = False
+        if read_user_backup_passcode() == "":
+            persistent_write.save_user_backup_passcode(passcode)
+            no_backup_passcode = True
+
+        for key, value in decrypted_credentials.items():
+            persistent_write.save(key, value["username"], value["password"])
+
+        if no_backup_passcode:
+            return RuntimeWarning(no_backup_passcode)
+        else:
+            return None
+    except Exception as e:
+        print("exception", e)
+
+        return e
+
+
+def search_and_decrypt(website_keyword: str) -> dict:
     if read_user_backup_passcode() == "":
         return {}
 
-    results = _search_matched_results(website_keyword, CLEAR_TEXT_PWD_FILE_NAME)
-    # filter_out_backup_passcode_results = {key: value for key, value in results.items() if key != PASSCODE_WAREHOUSE}
-    decrypted_result = {}
-    for key, value in results.items():
-        decrypted_pwd = cryptography_related.password_decrypt(value["password"], user_backup_passcode)
-        decrypted_result[key] = {
-            "username": results[key]["username"],
-            "password": decrypted_pwd
-        }
-    return decrypted_result
+    results = _search_matched_results(website_keyword, read(CLEAR_TEXT_PWD_FILE_NAME))
+    return _decrypt_password_fields(results, user_backup_passcode)
 
 
 # Returns a dictionary with encrypted text directly
-def _search_matched_results(website_keyword: str, file_name: str) -> dict:
+def _search_matched_results(website_keyword: str, dictionary: dict) -> dict:
     result = {}
-    # if not exists(file_name):
-    #     return result
 
-    dictionary: dict = read(file_name)
     for key in dictionary.keys():
         if re.search(website_keyword, key, re.IGNORECASE):
             result[key] = {
@@ -79,3 +87,14 @@ def _search_matched_results(website_keyword: str, file_name: str) -> dict:
             }
 
     return result
+
+
+def _decrypt_password_fields(encrypted_records: dict, decrypt_passcode: str) -> dict:
+    decrypted_result = {}
+    for key, value in encrypted_records.items():
+        decrypted_pwd = cryptography_related.password_decrypt(value["password"], decrypt_passcode)
+        decrypted_result[key] = {
+            "username": encrypted_records[key]["username"],
+            "password": decrypted_pwd
+        }
+    return decrypted_result

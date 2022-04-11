@@ -6,6 +6,7 @@ from ui_constants import PROMPT_WEBSITE, PROMPT_PASSWORD, PROMPT_USERNAME, PROMP
 
 
 def show(root_window, matched_result: dict):
+    # TODO: Better UI design
     pretty_table = PrettyTable()
     pretty_table.field_names = [PROMPT_WEBSITE, PROMPT_USERNAME, PROMPT_PASSWORD]
     pretty_table.align[PROMPT_WEBSITE] = "l"
