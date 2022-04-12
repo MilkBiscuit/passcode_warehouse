@@ -183,7 +183,7 @@ copy_button.grid(row=2, column=2, padx=8)
 Label(warehouse_label_frame).grid(row=3, column=0)
 warehouse_label_frame.grid_rowconfigure(index=3, weight=1)
 store_button = Button(warehouse_label_frame, text="Store", command=on_store)
-store_button.grid(row=4, columnspan=3, sticky=EW, padx=40, pady=20)
+store_button.grid(row=4, columnspan=3, padx=40, pady=(0, 8), sticky=EW)
 warehouse_label_frame.grid_rowconfigure("all", minsize=30)
 
 on_website_input_changed()
@@ -218,7 +218,7 @@ def generate_passcode_and_fill():
 
 
 factory_label_frame = tkinter.LabelFrame(root_window, text=PROMPT_FACTORY)
-factory_label_frame.grid(row=0, column=1, rowspan=2, padx=40, sticky=NSEW)
+factory_label_frame.grid(row=0, column=1, rowspan=2, padx=(20, 0), sticky=NSEW)
 
 Label(factory_label_frame, text=PROMPT_USE).grid(row=0, column=0, sticky=E)
 Label(factory_label_frame, text=PROMPT_LENGTH).grid(row=5, column=0, sticky=E)
@@ -242,7 +242,7 @@ length_spinbox.grid(row=5, column=1, sticky=W, pady=8)
 Label(factory_label_frame).grid(row=6, column=0)
 factory_label_frame.grid_rowconfigure(index=6, weight=1)
 generate_button = Button(factory_label_frame, text=PROMPT_GENERATE, command=generate_passcode_and_fill)
-generate_button.grid(row=7, columnspan=2, padx=40, pady=20, sticky=EW)
+generate_button.grid(row=7, columnspan=2, padx=40, pady=(0, 8), sticky=EW)
 
 menubar = Menu(root_window)
 root_window.config(menu=menubar)
