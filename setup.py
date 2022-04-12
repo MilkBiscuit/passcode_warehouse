@@ -7,7 +7,7 @@ Usage:
 
 from setuptools import setup
 
-APP = ['launcher.py']
+APP = ['PasscodeWarehouse/passcode_warehouse.py']
 DATA_FILES = []
 OPTIONS = {
     'includes': [

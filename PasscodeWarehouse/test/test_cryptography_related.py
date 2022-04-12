@@ -1,9 +1,8 @@
 import unittest
 
-import cryptography_related
+from PasscodeWarehouse import cryptography_related
 
 
-# TODO: How to group all unit test files together into one folder
 class MyTestCase(unittest.TestCase):
     def test_given_a_message_when_encrypt_then_decrypt_returns_the_message(self):
         password = 'MyP@ssw0rd'
