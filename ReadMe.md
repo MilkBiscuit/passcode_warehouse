@@ -33,9 +33,6 @@ Passwords will be encrypted before saving into file, here is an example:
 }
 ```
 
-
-[//]: # (TODO: Wait for the whole UI complete)
-
 # Read More
 [Password rules are bullshit](https://blog.codinghorror.com/password-rules-are-bullshit/)
 

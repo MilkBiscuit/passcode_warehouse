@@ -32,5 +32,6 @@ DIALOG_MESSAGE_INPUT_YOUR_BACKUP_PWD = "Please input your backup password.\n" \
 DIALOG_MESSAGE_CONFIRM_IMPORT = "Import credentials will discard all existing saved passwords." \
                                 "Are you sure?"
 DIALOG_MESSAGE_ASK_FOR_BACKUP_PWD = "Please input the password to decrypt the file you just imported:"
-DIALOG_MESSAGE_PASSCODE_INCORRECT = "Something went wrong. Is the decrypt passcode correct?"
-DIALOG_MESSAGE_IMPORT_SUCCEED = "Credentials are successfully imported"
+DIALOG_MESSAGE_PASSCODE_INCORRECT = "The decrypt passcode is incorrect."
+DIALOG_MESSAGE_SOMETHING_WRONG = "Something went wrong."
+DIALOG_MESSAGE_IMPORT_SUCCEED = "Yeah! Credentials are successfully imported!"

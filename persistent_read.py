@@ -1,7 +1,10 @@
 import json
 import re
 import typing
+from enum import Enum, auto
 from os.path import exists
+
+from cryptography.fernet import InvalidToken
 
 import cryptography_related
 import persistent_write
@@ -45,7 +48,14 @@ def read_user_backup_passcode() -> str:
     return user_backup_passcode
 
 
-def import_credentials(reading_file: typing.IO, passcode: str) -> Exception | None:
+class ImportResult(Enum):
+    SUCCESS = auto()
+    INHERIT_BACKUP_PASSCODE = auto()
+    DECRYPT_PASSCODE_INCORRECT = auto()
+    OTHER_ERROR = auto()
+
+
+def import_credentials(reading_file: typing.IO, passcode: str) -> ImportResult:
     try:
         imported_dictionary = json.load(reading_file)
         decrypted_credentials = _decrypt_password_fields(imported_dictionary, passcode)
@@ -58,13 +68,14 @@ def import_credentials(reading_file: typing.IO, passcode: str) -> Exception | No
             persistent_write.save(key, value["username"], value["password"])
 
         if no_backup_passcode:
-            return RuntimeWarning(no_backup_passcode)
+            return ImportResult.INHERIT_BACKUP_PASSCODE
         else:
-            return None
+            return ImportResult.SUCCESS
+    except InvalidToken:
+        return ImportResult.DECRYPT_PASSCODE_INCORRECT
     except Exception as e:
-        print("exception", e)
-
-        return e
+        print("Other exception when importing:", e)
+        return ImportResult.OTHER_ERROR
 
 
 def search_and_decrypt(website_keyword: str) -> dict:

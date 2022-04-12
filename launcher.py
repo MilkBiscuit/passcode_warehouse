@@ -46,15 +46,16 @@ def on_import_button():
         import_file = filedialog.askopenfile(mode="r", defaultextension=".json")
         if import_file is not None:
             def callback(passcode):
-                error = persistent_read.import_credentials(import_file, passcode)
-                # TODO: Does python have enum
-                if isinstance(error, RuntimeWarning):
-                    messagebox.showinfo(title="", message=f"Your backup passcode is still '{passcode}' because you"
-                                                          f"didn't have one before importing.")
-                elif error is None:
+                result = persistent_read.import_credentials(import_file, passcode)
+                if result == persistent_read.ImportResult.INHERIT_BACKUP_PASSCODE:
+                    messagebox.showinfo(title="", message=f"Your backup passcode is still '{passcode}', because you"
+                                                          f" didn't have one before importing.")
+                elif result == persistent_read.ImportResult.SUCCESS:
                     messagebox.showinfo(title="", message=DIALOG_MESSAGE_IMPORT_SUCCEED)
-                else:
+                elif result == persistent_read.ImportResult.DECRYPT_PASSCODE_INCORRECT:
                     messagebox.showerror(title="", message=DIALOG_MESSAGE_PASSCODE_INCORRECT)
+                else:
+                    messagebox.showerror(title="", message=DIALOG_MESSAGE_SOMETHING_WRONG)
 
             pop_dialog_to_ask_backup_passcode(
                 message=DIALOG_MESSAGE_ASK_FOR_BACKUP_PWD,
@@ -123,17 +124,33 @@ def on_store():
     password_var.set("")
 
 
+def on_website_entry_key_press(event: tkinter.Event):
+    if event.keysym == "Return":
+        on_search_tapped()
+    elif event.keysym == "BackSpace":
+        if event.keycode == 864026751:
+            # Option + Backspace
+            current_website_value = website_var.get()
+            last_space_index = current_website_value.rfind(" ")
+            if last_space_index == -1:
+                website_entry.delete(0, "insert")
+            elif not current_website_value[website_entry.index("insert") - 1].isspace():
+                website_entry.delete(last_space_index + 1, "insert")
+        elif event.keycode == 855638143:
+            # Command + Backspace
+            website_entry.delete(0, "insert")
+
+
 def on_search_tapped():
     result = persistent_read.search_and_decrypt(website_var.get())
     matched_result_num = len(result.keys())
-    if matched_result_num == 0:
-        pass
-    elif matched_result_num == 1:
+    if matched_result_num == 1:
         website_key = next(iter(result))
         username_var.set(result[website_key]["username"])
         password_var.set(result[website_key]["password"])
     else:
-        matched_result_popup.show(root_window, result)
+        if matched_result_num > 1:
+            matched_result_popup.show(root_window, result)
         username_var.set("")
         password_var.set("")
 
@@ -150,9 +167,11 @@ password_var = StringVar()
 website_var.trace("w", on_website_input_changed)
 username_var.trace("w", on_username_input_changed)
 password_var.trace("w", on_password_input_changed)
-# TODO: Command + DEL, ALT + DEL don't work
-# TODO: ENTER Hardware key don't work
-Entry(warehouse_label_frame, textvariable=website_var).grid(row=0, column=1, sticky=EW, padx=8)
+website_entry = Entry(warehouse_label_frame, textvariable=website_var)
+website_entry.grid(row=0, column=1, sticky=EW, padx=8)
+website_entry.bind(sequence="<Return>", func=on_website_entry_key_press)
+website_entry.bind(sequence="<Option-BackSpace>", func=on_website_entry_key_press)
+website_entry.bind(sequence="<Command-BackSpace>", func=on_website_entry_key_press)
 Entry(warehouse_label_frame, textvariable=username_var).grid(row=1, column=1, columnspan=2, sticky=EW, padx=8)
 password_entry = Entry(warehouse_label_frame, textvariable=password_var)
 password_entry.grid(row=2, column=1, sticky=EW, padx=8)
