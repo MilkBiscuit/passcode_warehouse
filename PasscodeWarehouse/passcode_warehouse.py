@@ -146,6 +146,7 @@ def on_search_tapped():
     matched_result_num = len(result.keys())
     if matched_result_num == 1:
         website_key = next(iter(result))
+        website_var.set(website_key)
         username_var.set(result[website_key]["username"])
         password_var.set(result[website_key]["password"])
     else:
