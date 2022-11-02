@@ -37,3 +37,6 @@ Passwords will be encrypted before saving into file, here is an example:
 [Password rules are bullshit](https://blog.codinghorror.com/password-rules-are-bullshit/)
 
 Thanks to [100 Days of Code](https://www.udemy.com/course/100-days-of-code/) - Day 29
+
+# Note
+If you're using macOS 12 Monterey, please update to Python 3.10.0 or later, otherwise you'll end up seeing a blank window when running.
