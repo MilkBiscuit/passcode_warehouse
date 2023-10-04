@@ -12,6 +12,7 @@ DEFAULT_ITERATION_NUM = 10_000
 
 def password_encrypt(msg: str, pwd: str, iteration_num: int = DEFAULT_ITERATION_NUM) -> str:
     encrypted_msg_bytes = _password_encrypt(msg.encode(), pwd, iteration_num)
+    print("encrypted string is " + encrypted_msg_bytes.decode())
 
     return encrypted_msg_bytes.decode()
 
@@ -32,6 +33,8 @@ def _derive_key(pwd: bytes, salt: bytes, iteration_num: int) -> bytes:
 def _password_encrypt(msg: bytes, pwd: str, iteration_num: int) -> bytes:
     salt = secrets.token_bytes(16)
     key = _derive_key(pwd.encode(), salt, iteration_num)
+    print("iteration_num is " + b64e(b'%b' % iteration_num.to_bytes(4, 'big')).decode())
+    print("salt is " + b64e(b'%b' % salt).decode())
     return b64e(
         b'%b%b%b' % (
             salt,
