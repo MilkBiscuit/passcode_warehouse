@@ -1,6 +1,6 @@
 import unittest
 
-from PasscodeWarehouse import cryptography_related
+from PasscodeWarehouse.domain import cryptography_related
 
 
 class MyTestCase(unittest.TestCase):

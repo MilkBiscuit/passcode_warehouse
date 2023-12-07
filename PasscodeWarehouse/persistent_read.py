@@ -6,8 +6,8 @@ from os.path import exists
 
 from cryptography.fernet import InvalidToken
 
-import cryptography_related
 import persistent_write
+from PasscodeWarehouse.domain import cryptography_related
 from persistent_constants import *
 
 user_backup_passcode = ""

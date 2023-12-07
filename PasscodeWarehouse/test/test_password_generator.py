@@ -1,6 +1,6 @@
 import unittest
 
-from PasscodeWarehouse import password_generator
+from PasscodeWarehouse.domain import password_generator
 
 
 class MyTestCase(unittest.TestCase):

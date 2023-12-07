@@ -2,7 +2,7 @@ from tkinter import Toplevel, Text, END, DISABLED
 
 from prettytable import PrettyTable
 
-from ui_constants import PROMPT_WEBSITE, PROMPT_PASSWORD, PROMPT_USERNAME, PROMPT_MATCHED_RESULTS
+from PasscodeWarehouse.ui.ui_constants import PROMPT_WEBSITE, PROMPT_PASSWORD, PROMPT_USERNAME, PROMPT_MATCHED_RESULTS
 
 
 def show(root_window, matched_result: dict):

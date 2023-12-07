@@ -3,8 +3,8 @@ import os
 import typing
 from os.path import exists
 
-import cryptography_related
 import persistent_read
+from PasscodeWarehouse.domain import cryptography_related
 from persistent_constants import *
 
 

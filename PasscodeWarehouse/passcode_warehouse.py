@@ -8,11 +8,11 @@ from tkinter.ttk import *
 
 import pyperclip
 
-import matched_result_popup
 import persistent_read
 import persistent_write
-from password_generator import generate_password
-from ui_constants import *
+from PasscodeWarehouse.domain.password_generator import generate_password
+from PasscodeWarehouse.ui import matched_result_popup
+from PasscodeWarehouse.ui.ui_constants import *
 
 # -------------------- UI setup -------------------- #
 root_window = Tk()
