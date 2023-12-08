@@ -37,8 +37,6 @@ def password_encrypt(msg: str, pwd: str) -> str:
     encrypted_msg_bytes = cryptor.encrypt(msg, pwd)
     encode_bytes = base64.encodebytes(encrypted_msg_bytes)
     encoded_string = encode_bytes.decode('utf-8')
-    print(encode_bytes)
-    print(encoded_string)
 
     return encoded_string
 
@@ -47,9 +45,7 @@ def password_decrypt(encrypted_msg: str, pwd: str) -> str:
     try:
         decrypted_bytes = encrypted_msg.encode('utf-8')
         decrypted_bytes = base64.decodebytes(decrypted_bytes)
-        print(list(decrypted_bytes))
         decrypted_string = rncryptor.decrypt(decrypted_bytes, pwd)
-        print(decrypted_string)
 
         return decrypted_string
     except Exception as e:

@@ -19,7 +19,6 @@ from PasscodeWarehouse.usecase import import_credentials_uc
 from PasscodeWarehouse.adapter.master_password_repo import MasterPasswordRepo
 
 # -------------------- UI setup -------------------- #
-# TODO why the mouse cursor not working properly
 root_window = Tk()
 root_window.title(APP_NAME)
 root_window.config(padx=20, pady=20)
@@ -110,15 +109,6 @@ def on_password_input_changed(*args):
 
 
 def on_store():
-    if MasterPasswordRepo().user_master_password == "":
-        def callback(passcode):
-            MasterPasswordRepo().save_master_password(passcode)
-        pop_dialog_to_ask_backup_passcode(
-            message=DIALOG_MESSAGE_INPUT_YOUR_BACKUP_PWD,
-            positive_callable=callback
-        )
-        return
-
     store_credential_uc.invoke(website_var.get(), username_var.get(), password_var.get())
     website_var.set("")
     username_var.set("")
@@ -217,6 +207,16 @@ def generate_passcode_and_fill():
     password_entry.delete(0, END)
     password_entry.insert(END, password)
     copy_password_into_clipboard()
+
+
+if MasterPasswordRepo().user_master_password == "":
+    def callback(passcode):
+        MasterPasswordRepo().save_master_password(passcode)
+
+    pop_dialog_to_ask_backup_passcode(
+        message=DIALOG_MESSAGE_INPUT_YOUR_BACKUP_PWD,
+        positive_callable=callback
+    )
 
 
 factory_label_frame = tkinter.LabelFrame(root_window, text=PROMPT_FACTORY)
