@@ -15,8 +15,11 @@ from PasscodeWarehouse.usecase import search_credentials_uc
 from PasscodeWarehouse.usecase import store_credential_uc
 from PasscodeWarehouse.usecase import export_credentials_uc
 from PasscodeWarehouse.usecase import import_credentials_uc
+# TODO: use case instead of adapter
+from PasscodeWarehouse.adapter.master_password_repo import MasterPasswordRepo
 
 # -------------------- UI setup -------------------- #
+# TODO why the mouse cursor not working properly
 root_window = Tk()
 root_window.title(APP_NAME)
 root_window.config(padx=20, pady=20)
@@ -45,12 +48,8 @@ def on_import_button():
     import_file = filedialog.askopenfile(mode="r", defaultextension=".json")
     if import_file is not None:
         def callback(passcode):
-            # TODO: double check the logic here
             import_result = import_credentials_uc.invoke(import_file, passcode)
-            if import_result == import_credentials_uc.ImportResult.INHERIT_BACKUP_PASSCODE:
-                messagebox.showinfo(title="", message=f"Your backup passcode is still '{passcode}', because you"
-                                                      f" didn't have one before importing.")
-            elif import_result == import_credentials_uc.ImportResult.SUCCESS:
+            if import_result == import_credentials_uc.ImportResult.SUCCESS:
                 messagebox.showinfo(title="", message=DIALOG_MESSAGE_IMPORT_SUCCEED)
             elif import_result == import_credentials_uc.ImportResult.DECRYPT_PASSCODE_INCORRECT:
                 messagebox.showerror(title="", message=DIALOG_MESSAGE_PASSCODE_INCORRECT)
@@ -111,13 +110,15 @@ def on_password_input_changed(*args):
 
 
 def on_store():
-    # if persistent_read.read_user_backup_passcode() == "":
-    #     pop_dialog_to_ask_backup_passcode(
-    #         message=DIALOG_MESSAGE_INPUT_YOUR_BACKUP_PWD,
-    #         positive_callable=persistent_write.save_user_backup_passcode
-    #     )
-    #     return
-    #
+    if MasterPasswordRepo().user_master_password == "":
+        def callback(passcode):
+            MasterPasswordRepo().save_master_password(passcode)
+        pop_dialog_to_ask_backup_passcode(
+            message=DIALOG_MESSAGE_INPUT_YOUR_BACKUP_PWD,
+            positive_callable=callback
+        )
+        return
+
     store_credential_uc.invoke(website_var.get(), username_var.get(), password_var.get())
     website_var.set("")
     username_var.set("")

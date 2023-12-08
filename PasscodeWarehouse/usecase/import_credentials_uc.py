@@ -8,7 +8,6 @@ from PasscodeWarehouse.domain.cryptography_related import *
 
 class ImportResult(Enum):
     SUCCESS = auto()
-    INHERIT_BACKUP_PASSCODE = auto()
     DECRYPT_PASSCODE_INCORRECT = auto()
     OTHER_ERROR = auto()
 
@@ -22,13 +21,7 @@ def invoke(reading_file: typing.IO, passcode: str) -> ImportResult:
             username = value["username"]
             password = value["password"]
             LocalFileCredentialRepo().save(website, username, password)
-        # re_encrypted_credentials = encrypt_password_fields(decrypted_credentials, DEFAULT_MASTER_PASSWORD)
-        # LocalFileCredentialRepo().existing_dict = re_encrypted_credentials
         return ImportResult.SUCCESS
-        # no_backup_passcode = False
-        # if read_user_backup_passcode() == "":
-        #     persistent_write.save_user_backup_passcode(passcode)
-        #     no_backup_passcode = True
     except PasswordDoesNotMatch:
         return ImportResult.DECRYPT_PASSCODE_INCORRECT
     except Exception as e:
