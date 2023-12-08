@@ -131,6 +131,9 @@ dmypy.json
 # PyCharm
 .idea/
 
+PasscodeWarehouse/sensitive_data.py
+
 # Temp files
 clear_text_password.json
 backup_passcode.json
+

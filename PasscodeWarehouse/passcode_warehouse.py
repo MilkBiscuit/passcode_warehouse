@@ -8,11 +8,13 @@ from tkinter.ttk import *
 
 import pyperclip
 
-import persistent_read
-import persistent_write
 from PasscodeWarehouse.domain.password_generator import generate_password
 from PasscodeWarehouse.ui import matched_result_popup
 from PasscodeWarehouse.ui.ui_constants import *
+from PasscodeWarehouse.usecase import search_credentials_uc
+from PasscodeWarehouse.usecase import store_credential_uc
+from PasscodeWarehouse.usecase import export_credentials_uc
+from PasscodeWarehouse.usecase import import_credentials_uc
 
 # -------------------- UI setup -------------------- #
 root_window = Tk()
@@ -35,40 +37,38 @@ def pop_dialog_to_ask_backup_passcode(message: str, positive_callable: typing.An
 def on_export_button():
     export_file = filedialog.asksaveasfile(mode="w", defaultextension=".json")
     if export_file is not None:
-        persistent_write.export_credentials(export_file)
+        # TODO: ask for password
+        export_credentials_uc.invoke(export_file, "123456")
 
 
 def on_import_button():
-    # TODO: Discarding existing records is not necessary, but there will be potential same-key-conflict
-    discard = messagebox.askyesno(title="", message=DIALOG_MESSAGE_CONFIRM_IMPORT)
-    if discard:
-        persistent_write.clear_all_credentials()
-        import_file = filedialog.askopenfile(mode="r", defaultextension=".json")
-        if import_file is not None:
-            def callback(passcode):
-                result = persistent_read.import_credentials(import_file, passcode)
-                if result == persistent_read.ImportResult.INHERIT_BACKUP_PASSCODE:
-                    messagebox.showinfo(title="", message=f"Your backup passcode is still '{passcode}', because you"
-                                                          f" didn't have one before importing.")
-                elif result == persistent_read.ImportResult.SUCCESS:
-                    messagebox.showinfo(title="", message=DIALOG_MESSAGE_IMPORT_SUCCEED)
-                elif result == persistent_read.ImportResult.DECRYPT_PASSCODE_INCORRECT:
-                    messagebox.showerror(title="", message=DIALOG_MESSAGE_PASSCODE_INCORRECT)
-                else:
-                    messagebox.showerror(title="", message=DIALOG_MESSAGE_SOMETHING_WRONG)
+    import_file = filedialog.askopenfile(mode="r", defaultextension=".json")
+    if import_file is not None:
+        def callback(passcode):
+            # TODO: double check the logic here
+            import_result = import_credentials_uc.invoke(import_file, passcode)
+            if import_result == import_credentials_uc.ImportResult.INHERIT_BACKUP_PASSCODE:
+                messagebox.showinfo(title="", message=f"Your backup passcode is still '{passcode}', because you"
+                                                      f" didn't have one before importing.")
+            elif import_result == import_credentials_uc.ImportResult.SUCCESS:
+                messagebox.showinfo(title="", message=DIALOG_MESSAGE_IMPORT_SUCCEED)
+            elif import_result == import_credentials_uc.ImportResult.DECRYPT_PASSCODE_INCORRECT:
+                messagebox.showerror(title="", message=DIALOG_MESSAGE_PASSCODE_INCORRECT)
+            else:
+                messagebox.showerror(title="", message=DIALOG_MESSAGE_SOMETHING_WRONG)
 
-            pop_dialog_to_ask_backup_passcode(
-                message=DIALOG_MESSAGE_ASK_FOR_BACKUP_PWD,
-                positive_callable=callback
-            )
+        pop_dialog_to_ask_backup_passcode(
+            message=DIALOG_MESSAGE_ASK_FOR_BACKUP_PWD,
+            positive_callable=callback
+        )
 
 
 backup_label_frame = tkinter.LabelFrame(root_window, text=PROMPT_BACKUP)
 backup_label_frame.grid(row=0, column=0, sticky=NSEW)
 
-Button(backup_label_frame, command=on_import_button, text=PROMPT_IMPORT)\
+Button(backup_label_frame, command=on_import_button, text=PROMPT_IMPORT) \
     .grid(row=0, column=0, padx=8, pady=8, sticky=EW)
-Button(backup_label_frame, command=on_export_button, text=PROMPT_EXPORT)\
+Button(backup_label_frame, command=on_export_button, text=PROMPT_EXPORT) \
     .grid(row=0, column=1, padx=8, pady=8, sticky=EW)
 backup_label_frame.grid_columnconfigure(index=0, weight=1)
 backup_label_frame.grid_columnconfigure(index=1, weight=1)
@@ -111,14 +111,14 @@ def on_password_input_changed(*args):
 
 
 def on_store():
-    if persistent_read.read_user_backup_passcode() == "":
-        pop_dialog_to_ask_backup_passcode(
-            message=DIALOG_MESSAGE_INPUT_YOUR_BACKUP_PWD,
-            positive_callable=persistent_write.save_user_backup_passcode
-        )
-        return
-
-    persistent_write.save(website_var.get(), username_var.get(), password_var.get())
+    # if persistent_read.read_user_backup_passcode() == "":
+    #     pop_dialog_to_ask_backup_passcode(
+    #         message=DIALOG_MESSAGE_INPUT_YOUR_BACKUP_PWD,
+    #         positive_callable=persistent_write.save_user_backup_passcode
+    #     )
+    #     return
+    #
+    store_credential_uc.invoke(website_var.get(), username_var.get(), password_var.get())
     website_var.set("")
     username_var.set("")
     password_var.set("")
@@ -142,7 +142,7 @@ def on_website_entry_key_press(event: tkinter.Event):
 
 
 def on_search_tapped():
-    result = persistent_read.search_and_decrypt(website_var.get())
+    result = search_credentials_uc.invoke(website_var.get())
     matched_result_num = len(result.keys())
     if matched_result_num == 1:
         website_key = next(iter(result))
@@ -237,7 +237,7 @@ custom_char_entry.insert(END, DEFAULT_CUSTOM_CHARACTERS)
 custom_char_entry.grid(row=4, column=1, sticky=W)
 on_custom_checked()
 required_length = IntVar(value=10)
-length_spinbox = Spinbox(factory_label_frame, from_=4, to=50, textvariable=required_length, wrap=True, width=2)
+length_spinbox = Spinbox(factory_label_frame, from_=4, to=20, textvariable=required_length, wrap=True, width=2)
 length_spinbox.grid(row=5, column=1, sticky=W, pady=8)
 # Just for spacing
 Label(factory_label_frame).grid(row=6, column=0)
