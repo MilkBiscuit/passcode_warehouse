@@ -25,7 +25,7 @@ root_window.config(padx=20, pady=20)
 
 
 # --- Input Dialog --- #
-def pop_dialog_to_ask_backup_passcode(message: str, positive_callable: typing.Any):
+def pop_dialog_to_ask_for_passcode(message: str, positive_callable: typing.Any):
     backup_passcode = simpledialog.askstring(title=DIALOG_TITLE_BACKUP_PWD,
                                              prompt=message,
                                              parent=root_window)
@@ -37,10 +37,15 @@ def pop_dialog_to_ask_backup_passcode(message: str, positive_callable: typing.An
 
 # --- Import/Export --- #
 def on_export_button():
-    export_file = filedialog.asksaveasfile(mode="w", defaultextension=".json")
-    if export_file is not None:
-        # TODO: ask for password
-        export_credentials_uc.invoke(export_file, "123456")
+    def export_password_callback(passcode):
+        export_file = filedialog.asksaveasfile(mode="w", defaultextension=".json")
+        if export_file is not None:
+            export_credentials_uc.invoke(export_file, passcode)
+
+    pop_dialog_to_ask_for_passcode(
+        message=DIALOG_MESSAGE_INPUT_EXPORT_PWD,
+        positive_callable=export_password_callback
+    )
 
 
 def on_import_button():
@@ -55,7 +60,7 @@ def on_import_button():
             else:
                 messagebox.showerror(title="", message=DIALOG_MESSAGE_SOMETHING_WRONG)
 
-        pop_dialog_to_ask_backup_passcode(
+        pop_dialog_to_ask_for_passcode(
             message=DIALOG_MESSAGE_ASK_FOR_BACKUP_PWD,
             positive_callable=callback
         )
@@ -210,12 +215,12 @@ def generate_passcode_and_fill():
 
 
 if MasterPasswordRepo().user_master_password == "":
-    def callback(passcode):
+    def master_password_callback(passcode):
         MasterPasswordRepo().save_master_password(passcode)
 
-    pop_dialog_to_ask_backup_passcode(
-        message=DIALOG_MESSAGE_INPUT_YOUR_BACKUP_PWD,
-        positive_callable=callback
+    pop_dialog_to_ask_for_passcode(
+        message=DIALOG_MESSAGE_INPUT_MASTER_PWD,
+        positive_callable=master_password_callback
     )
 
 
