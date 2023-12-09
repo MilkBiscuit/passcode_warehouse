@@ -26,7 +26,7 @@ root_window.config(padx=20, pady=20)
 
 # --- Input Dialog --- #
 def pop_dialog_to_ask_for_passcode(message: str, positive_callable: typing.Any):
-    backup_passcode = simpledialog.askstring(title=DIALOG_TITLE_BACKUP_PWD,
+    backup_passcode = simpledialog.askstring(title=DIALOG_TITLE_INPUT_PWD,
                                              prompt=message,
                                              parent=root_window)
     if backup_passcode is None or len(backup_passcode) == 0:
@@ -143,8 +143,8 @@ def on_search_tapped():
     if matched_result_num == 1:
         website_key = next(iter(result))
         website_var.set(website_key)
-        username_var.set(result[website_key]["username"])
-        password_var.set(result[website_key]["password"])
+        username_var.set(result[website_key].username)
+        password_var.set(result[website_key].password)
     else:
         if matched_result_num > 1:
             matched_result_popup.show(root_window, result)

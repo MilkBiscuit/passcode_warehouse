@@ -2,6 +2,8 @@ import base64
 
 import rncryptor
 
+from PasscodeWarehouse.domain.model.credential_item import CredentialItem
+
 cryptor = rncryptor.RNCryptor()
 
 
@@ -10,26 +12,24 @@ class PasswordDoesNotMatch(Exception):
     pass
 
 
-def encrypt_password_fields(records: dict, master_pwd: str) -> dict:
+def encrypt_password_fields(records: dict[str, CredentialItem], master_pwd: str) -> dict:
     encrypted_records = {}
     for key, value in records.items():
-        clear_text_pwd = value["password"]
+        clear_text_pwd = value.password
         encrypted_pwd = password_encrypt(clear_text_pwd, master_pwd)
         encrypted_records[key] = {
-            "username": value["username"],
+            "username": value.username,
             "encryptedPassword": encrypted_pwd
         }
     return encrypted_records
 
 
-def decrypt_password_fields(encrypted_records: dict, master_pwd: str) -> dict:
+def decrypt_password_fields(encrypted_records: dict, master_pwd: str) -> dict[str, CredentialItem]:
     decrypted_result = {}
     for key, value in encrypted_records.items():
         decrypted_pwd = password_decrypt(value["encryptedPassword"], master_pwd)
-        decrypted_result[key] = {
-            "username": value["username"],
-            "password": decrypted_pwd
-        }
+        item = CredentialItem(id=key, username=value["username"], password=decrypted_pwd)
+        decrypted_result[key] = item
     return decrypted_result
 
 

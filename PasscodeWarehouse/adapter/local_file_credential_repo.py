@@ -2,6 +2,7 @@ import os
 from os.path import exists
 
 from PasscodeWarehouse.adapter.master_password_repo import MasterPasswordRepo
+from PasscodeWarehouse.domain.model.credential_item import CredentialItem
 from PasscodeWarehouse.sensitive_data import DEFAULT_MASTER_PASSWORD
 from PasscodeWarehouse.util import persistent_helper
 from PasscodeWarehouse.domain import cryptography_related
@@ -11,7 +12,7 @@ PWD_FILE_NAME = "clear_text_password.json"
 
 class LocalFileCredentialRepo:
     _instance = None
-    clear_text_dict: dict = {}
+    clear_text_dict: dict[str, CredentialItem] = {}
 
     def __new__(cls, *args, **kw):
         if cls._instance is None:
@@ -29,11 +30,8 @@ class LocalFileCredentialRepo:
             self.clear_text_dict = {}
 
     def save(self, website: str, username: str, password: str) -> bool:
-        item_data = {
-            "username": username,
-            "password": password,
-        }
-        self.clear_text_dict[website] = item_data
+        item = CredentialItem(id=website, username=username, password=password)
+        self.clear_text_dict[website] = item
         encrypted_dict = cryptography_related.encrypt_password_fields(self.clear_text_dict, self.master_password)
         persistent_helper.write_dict(encrypted_dict, PWD_FILE_NAME)
         return True

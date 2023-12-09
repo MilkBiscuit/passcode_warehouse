@@ -2,10 +2,11 @@ from tkinter import Toplevel, Text, END, DISABLED
 
 from prettytable import PrettyTable
 
+from PasscodeWarehouse.domain.model.credential_item import CredentialItem
 from PasscodeWarehouse.ui.ui_constants import PROMPT_WEBSITE, PROMPT_PASSWORD, PROMPT_USERNAME, PROMPT_MATCHED_RESULTS
 
 
-def show(root_window, matched_result: dict):
+def show(root_window, matched_result: dict[str, CredentialItem]):
     # TODO: Better UI design
     pretty_table = PrettyTable()
     pretty_table.field_names = [PROMPT_WEBSITE, PROMPT_USERNAME, PROMPT_PASSWORD]
@@ -13,7 +14,7 @@ def show(root_window, matched_result: dict):
     pretty_table.align[PROMPT_USERNAME] = "l"
     pretty_table.align[PROMPT_PASSWORD] = "l"
     for key, value in matched_result.items():
-        pretty_table.add_row([key, value["username"], value["password"]])
+        pretty_table.add_row([key, value.username, value.password])
 
     popup_top = Toplevel(root_window)
     popup_top.config(padx=10, pady=10)

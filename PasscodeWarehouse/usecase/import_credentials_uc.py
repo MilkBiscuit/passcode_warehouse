@@ -18,8 +18,8 @@ def invoke(reading_file: typing.IO, passcode: str) -> ImportResult:
         decrypted_credentials = decrypt_password_fields(imported_dictionary, passcode)
         for key, value in decrypted_credentials.items():
             website = key
-            username = value["username"]
-            password = value["password"]
+            username = value.username
+            password = value.password
             LocalFileCredentialRepo().save(website, username, password)
         return ImportResult.SUCCESS
     except PasswordDoesNotMatch:
