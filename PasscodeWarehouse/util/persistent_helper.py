@@ -15,4 +15,4 @@ def read_dict(file_name: str) -> dict:
 
 def write_dict(data: dict, file_name: str):
     with open(file_name, "w") as writing_file:
-        json.dump(data, writing_file, indent=4)
+        json.dump(data, writing_file, indent=4, default=lambda __o: __o.__dict__)

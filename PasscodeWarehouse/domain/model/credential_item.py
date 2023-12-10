@@ -8,6 +8,9 @@ class EncryptedCredentialItem:
     username: str
     encryptedPassword: str
 
+    def __getitem__(self, key):
+        self.__dict__.__getitem__(key)
+
 
 @dataclass
 class CredentialItem:
