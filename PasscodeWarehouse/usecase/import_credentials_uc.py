@@ -14,8 +14,9 @@ class ImportResult(Enum):
 
 def invoke(reading_file: typing.IO, passcode: str) -> ImportResult:
     try:
-        imported_dictionary = json.load(reading_file)
-        decrypted_credentials = decrypt_password_fields(imported_dictionary, passcode)
+        imported_array = json.load(reading_file)
+        imported_dict: dict[str: dict] = {item["id"]: item for item in imported_array}
+        decrypted_credentials = decrypt_password_fields(imported_dict, passcode)
         for key, value in decrypted_credentials.items():
             website = key
             username = value.username

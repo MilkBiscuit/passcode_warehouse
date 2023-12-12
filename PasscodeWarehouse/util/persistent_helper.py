@@ -1,5 +1,6 @@
 import json
 from os.path import exists
+from typing import TextIO
 
 
 def read_dict(file_name: str) -> dict:
@@ -15,4 +16,8 @@ def read_dict(file_name: str) -> dict:
 
 def write_dict(data: dict, file_name: str):
     with open(file_name, "w") as writing_file:
-        json.dump(data, writing_file, indent=4, default=lambda __o: __o.__dict__)
+        write_to_output(writing_file, data)
+
+
+def write_to_output(outfile: TextIO, dict_content: dict):
+    json.dump(dict_content, outfile, indent=4, default=lambda __o: __o.__dict__)
