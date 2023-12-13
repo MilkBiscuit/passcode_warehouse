@@ -33,6 +33,9 @@ Passwords will be encrypted before saving into file, here is an example:
 }
 ```
 
+## Download
+PasscodeBin for macOS [version 1.4](https://drive.google.com/file/d/1jsW3kC1KSADQb4YESpr-BwYjRb2pKhcI/view), have tested and works fine on macOS Sonoma 14.2.
+
 # Read More
 [Password rules are bullshit](https://blog.codinghorror.com/password-rules-are-bullshit/)
 

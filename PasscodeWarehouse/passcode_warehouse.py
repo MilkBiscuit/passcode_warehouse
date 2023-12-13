@@ -8,15 +8,15 @@ from tkinter.ttk import *
 
 import pyperclip
 
-from PasscodeWarehouse.domain.password_generator import generate_password
-from PasscodeWarehouse.ui import matched_result_popup
-from PasscodeWarehouse.ui.ui_constants import *
-from PasscodeWarehouse.usecase import search_credentials_uc
-from PasscodeWarehouse.usecase import store_credential_uc
-from PasscodeWarehouse.usecase import export_credentials_uc
-from PasscodeWarehouse.usecase import import_credentials_uc
+from domain.password_generator import generate_password
+from ui import matched_result_popup
+from ui.ui_constants import *
+from usecase import search_credentials_uc
+from usecase import store_credential_uc
+from usecase import export_credentials_uc
+from usecase import import_credentials_uc
 # TODO: use case instead of adapter
-from PasscodeWarehouse.adapter.master_password_repo import MasterPasswordRepo
+from adapter.master_password_repo import MasterPasswordRepo
 
 # -------------------- UI setup -------------------- #
 root_window = Tk()
@@ -42,6 +42,7 @@ def on_export_button():
         if export_file is not None:
             export_credentials_uc.invoke(export_file, passcode)
 
+    # TODO: hide password on the UI
     pop_dialog_to_ask_for_passcode(
         message=DIALOG_MESSAGE_INPUT_EXPORT_PWD,
         positive_callable=export_password_callback

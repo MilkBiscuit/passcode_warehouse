@@ -5,15 +5,15 @@ Usage:
     python setup.py py2app
 """
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 APP = ['PasscodeWarehouse/passcode_warehouse.py']
 DATA_FILES = []
 OPTIONS = {
     'includes': [
-        "pyperclip",
         "cffi",
-        "cryptography",
+        "pyperclip",
+        "rncryptor",
     ],
     'iconfile': "resources/passcode_folder.icns",
     'plist': "Info.plist"
@@ -21,8 +21,9 @@ OPTIONS = {
 
 setup(
     app=APP,
-    name="PasscodeWarehouse",
+    name="PasscodeBin",
     data_files=DATA_FILES,
     options={'py2app': OPTIONS},
+    packages=find_packages(),
     setup_requires=['py2app'],
 )
