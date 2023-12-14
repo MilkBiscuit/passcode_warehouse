@@ -16,12 +16,8 @@ def invoke(reading_file: typing.IO, passcode: str) -> ImportResult:
     try:
         imported_array = json.load(reading_file)
         imported_dict: dict[str: dict] = {item["id"]: item for item in imported_array}
-        decrypted_credentials = decrypt_password_fields(imported_dict, passcode)
-        for key, value in decrypted_credentials.items():
-            website = key
-            username = value.username
-            password = value.password
-            LocalFileCredentialRepo().save(website, username, password)
+        decrypted_credentials: dict[str: CredentialItem] = decrypt_password_fields(imported_dict, passcode)
+        LocalFileCredentialRepo().save_batch(decrypted_credentials)
         return ImportResult.SUCCESS
     except PasswordDoesNotMatch:
         return ImportResult.DECRYPT_PASSCODE_INCORRECT

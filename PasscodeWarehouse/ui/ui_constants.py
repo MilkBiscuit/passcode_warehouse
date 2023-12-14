@@ -1,5 +1,5 @@
 # Prompt text showing on the UI
-APP_NAME = "Passcode Warehouse"
+APP_NAME = "PasscodeBin"
 
 # Backup
 PROMPT_BACKUP = "Backup"
