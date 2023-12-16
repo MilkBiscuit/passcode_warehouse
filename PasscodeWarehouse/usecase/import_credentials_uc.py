@@ -12,6 +12,7 @@ class ImportResult(Enum):
     OTHER_ERROR = auto()
 
 
+# TODO: fix the bug, when the app is in /Application folder, import doesn't always work
 def invoke(reading_file: typing.IO, passcode: str) -> ImportResult:
     try:
         imported_array = json.load(reading_file)

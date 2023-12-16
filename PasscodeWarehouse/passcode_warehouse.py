@@ -1,3 +1,5 @@
+import logging
+import threading
 import tkinter
 import typing
 from tkinter import *
@@ -16,7 +18,7 @@ from PasscodeWarehouse.usecase import search_credentials_uc
 from PasscodeWarehouse.usecase import store_credential_uc
 from PasscodeWarehouse.usecase import export_credentials_uc
 from PasscodeWarehouse.usecase import import_credentials_uc
-# TODO: use case instead of adapter
+# TODO: use case instead of adapter, Dependency injection
 from PasscodeWarehouse.adapter.master_password_repo import MasterPasswordRepo
 
 # -------------------- UI setup -------------------- #
@@ -24,11 +26,18 @@ root_window = Tk()
 root_window.title(APP_NAME)
 root_window.config(padx=20, pady=20)
 
+logging.basicConfig(
+    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
+    level=logging.DEBUG,
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+
 
 # --- Input Dialog --- #
 def pop_dialog_to_ask_for_passcode(message: str, positive_callable: typing.Any):
     backup_passcode = simpledialog.askstring(title=DIALOG_TITLE_INPUT_PWD,
                                              prompt=message,
+                                             show='*',
                                              parent=root_window)
     if backup_passcode is None or len(backup_passcode) == 0:
         print("The user didn't set a passcode")
@@ -43,7 +52,6 @@ def on_export_button():
         if export_file is not None:
             export_credentials_uc.invoke(export_file, passcode)
 
-    # TODO: hide password on the UI
     pop_dialog_to_ask_for_passcode(
         message=DIALOG_MESSAGE_INPUT_EXPORT_PWD,
         positive_callable=export_password_callback
@@ -216,6 +224,13 @@ def generate_passcode_and_fill():
     copy_password_into_clipboard()
 
 
+def _load_credentials():
+    # Read all the credentials from file, and encrypt them into memory
+    logging.debug("I'm about to load.")
+    LocalFileCredentialRepo()
+    logging.debug("Load credentials complete.")
+
+
 if MasterPasswordRepo().user_master_password == "":
     def master_password_callback(passcode):
         MasterPasswordRepo().save_master_password(passcode)
@@ -225,9 +240,8 @@ if MasterPasswordRepo().user_master_password == "":
         positive_callable=master_password_callback
     )
 else:
-    # TODO: Move the job to background
-    # Read all the credentials from file, and encrypt them into memory
-    LocalFileCredentialRepo()
+    thread = threading.Thread(target=_load_credentials)
+    thread.start()
 
 
 factory_label_frame = tkinter.LabelFrame(root_window, text=PROMPT_FACTORY)
