@@ -7,7 +7,7 @@ from PasscodeWarehouse.ui.ui_constants import PROMPT_WEBSITE, PROMPT_PASSWORD, P
 
 
 def show(root_window, matched_result: dict[str, CredentialItem]):
-    # TODO: Better UI design
+    # TODO: Better UI design, and the align does not work for non-ascii chars
     pretty_table = PrettyTable()
     pretty_table.field_names = [PROMPT_WEBSITE, PROMPT_USERNAME, PROMPT_PASSWORD]
     pretty_table.align[PROMPT_WEBSITE] = "l"

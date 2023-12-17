@@ -55,6 +55,7 @@ def on_export_button():
         if export_file is not None:
             export_credentials_uc.invoke(export_file, passcode)
 
+    # TODO: Input password twice, reduce the chance of wrong password
     pop_dialog_to_ask_for_passcode(
         message=DIALOG_MESSAGE_INPUT_EXPORT_PWD,
         positive_callable=export_password_callback
