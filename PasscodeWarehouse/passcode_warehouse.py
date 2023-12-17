@@ -21,16 +21,19 @@ from PasscodeWarehouse.usecase import import_credentials_uc
 # TODO: use case instead of adapter, Dependency injection
 from PasscodeWarehouse.adapter.master_password_repo import MasterPasswordRepo
 
+
+logging.basicConfig(
+    filename="passcode_bin_1.log",
+    encoding="utf-8",
+    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
+    level=logging.DEBUG,
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
 # -------------------- UI setup -------------------- #
 root_window = Tk()
 root_window.title(APP_NAME)
 root_window.config(padx=20, pady=20)
-
-logging.basicConfig(
-    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
-    level=logging.DEBUG,
-    datefmt="%Y-%m-%d %H:%M:%S"
-)
 
 
 # --- Input Dialog --- #
@@ -59,8 +62,12 @@ def on_export_button():
 
 
 def on_import_button():
-    import_file = filedialog.askopenfile(mode="r", defaultextension=".json")
-    if import_file is not None:
+    filename = filedialog.askopenfilename(defaultextension=".json")
+    if not filename:
+        return
+
+    with open(filename, 'r', encoding='utf8') as import_file:
+        # if import_file is not None:
         def callback(passcode):
             import_result = import_credentials_uc.invoke(import_file, passcode)
             if import_result == import_credentials_uc.ImportResult.SUCCESS:

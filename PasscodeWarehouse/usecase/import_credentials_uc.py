@@ -1,4 +1,5 @@
 import json
+import logging
 import typing
 from enum import Enum, auto
 
@@ -12,16 +13,18 @@ class ImportResult(Enum):
     OTHER_ERROR = auto()
 
 
-# TODO: fix the bug, when the app is in /Application folder, import doesn't always work
 def invoke(reading_file: typing.IO, passcode: str) -> ImportResult:
     try:
         imported_array = json.load(reading_file)
         imported_dict: dict[str: dict] = {item["id"]: item for item in imported_array}
+        logging.info("array is converted to dict.")
         decrypted_credentials: dict[str: CredentialItem] = decrypt_password_fields(imported_dict, passcode)
+        logging.info("decryption complete.")
         LocalFileCredentialRepo().save_batch(decrypted_credentials)
+        logging.info("save batch complete.")
         return ImportResult.SUCCESS
     except PasswordDoesNotMatch:
         return ImportResult.DECRYPT_PASSCODE_INCORRECT
     except Exception as e:
-        print("Other exception when importing:", e)
+        logging.error(msg="Other exception when importing:", exc_info=e)
         return ImportResult.OTHER_ERROR

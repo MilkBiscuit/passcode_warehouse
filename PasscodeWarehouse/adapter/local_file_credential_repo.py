@@ -10,12 +10,6 @@ from PasscodeWarehouse.domain import cryptography_related
 
 PWD_FILE_NAME = "clear_text_password.json"
 
-logging.basicConfig(
-    format="%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s",
-    level=logging.DEBUG,
-    datefmt="%Y-%m-%d %H:%M:%S"
-)
-
 
 class LocalFileCredentialRepo:
     _instance = None
@@ -49,9 +43,7 @@ class LocalFileCredentialRepo:
     def _add_or_update(self, website: str, username: str, clear_text_pwd: str):
         item = CredentialItem(id=website, username=username, password=clear_text_pwd)
         self.clear_text_dict[website] = item
-        logging.info("Start to encrypt " + website)
         encrypted_password = cryptography_related.password_encrypt(clear_text_pwd, self.master_password)
-        logging.info("Encryption completed for: " + website)
         self.cipher_text_dict[website] = {
             "id": website,
             "username": username,
