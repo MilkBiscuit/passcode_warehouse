@@ -2,11 +2,12 @@ from PasscodeWarehouse.domain import cryptography_related
 from PasscodeWarehouse.sensitive_data import PASSCODE_WAREHOUSE_USERNAME, PWD_TO_ENCRYPT_BACKUP_PASSCODE, \
     PASSCODE_WAREHOUSE
 from PasscodeWarehouse.util import persistent_helper
+from domain.adapterinterface.IMasterPasswordRepo import IMasterPasswordRepo
 
 BACKUP_PASSCODE_FILE_NAME = "backup_passcode.json"
 
 
-class MasterPasswordRepo:
+class MasterPasswordRepo(IMasterPasswordRepo):
     _instance = None
     user_master_password: str = ""
 
