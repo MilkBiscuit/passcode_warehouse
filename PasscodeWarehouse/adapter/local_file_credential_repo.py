@@ -3,15 +3,16 @@ import os
 from os.path import exists
 
 from PasscodeWarehouse.adapter.master_password_repo import MasterPasswordRepo
+from PasscodeWarehouse.domain import cryptography_related
+from PasscodeWarehouse.domain.adapterinterface.ICredentialRepo import ICredentialRepo
 from PasscodeWarehouse.domain.model.credential_item import CredentialItem
 from PasscodeWarehouse.sensitive_data import DEFAULT_MASTER_PASSWORD
 from PasscodeWarehouse.util import persistent_helper
-from PasscodeWarehouse.domain import cryptography_related
 
 PWD_FILE_NAME = "clear_text_password.json"
 
 
-class LocalFileCredentialRepo:
+class LocalFileCredentialRepo(ICredentialRepo):
     _instance = None
     clear_text_dict: dict[str, CredentialItem] = {}
     cipher_text_dict: dict = {}

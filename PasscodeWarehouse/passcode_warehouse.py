@@ -1,5 +1,4 @@
 import logging
-import threading
 import tkinter
 import typing
 from tkinter import *
@@ -10,17 +9,15 @@ from tkinter.ttk import *
 
 import pyperclip
 
-from PasscodeWarehouse.adapter.local_file_credential_repo import LocalFileCredentialRepo
-from PasscodeWarehouse.domain.password_generator import generate_password
 from PasscodeWarehouse.ui import matched_result_popup
 from PasscodeWarehouse.ui.ui_constants import *
+from PasscodeWarehouse.usecase import export_credentials_uc
+from PasscodeWarehouse.usecase import generate_pwd_uc
+from PasscodeWarehouse.usecase import import_credentials_uc
+from PasscodeWarehouse.usecase import load_credential_uc
+from PasscodeWarehouse.usecase import master_pwd_usecase
 from PasscodeWarehouse.usecase import search_credentials_uc
 from PasscodeWarehouse.usecase import store_credential_uc
-from PasscodeWarehouse.usecase import export_credentials_uc
-from PasscodeWarehouse.usecase import import_credentials_uc
-# TODO: use case instead of adapter, Dependency injection
-from PasscodeWarehouse.adapter.master_password_repo import MasterPasswordRepo
-
 
 logging.basicConfig(
     filename="passcode_bin_1.log",
@@ -220,36 +217,28 @@ def generate_passcode_and_fill():
         custom_chars = custom_char_entry.get()
     else:
         custom_chars = ""
-    password = generate_password(
+    password = generate_pwd_uc.invoke(
         lowercase=lowercase_var.get(),
         uppercase=uppercase_var.get(),
         number=number_var.get(),
         custom_chars=custom_chars,
-        required_length=required_length.get()
+        required_len=required_length.get()
     )
     password_entry.delete(0, END)
     password_entry.insert(END, password)
     copy_password_into_clipboard()
 
 
-def _load_credentials():
-    # Read all the credentials from file, and encrypt them into memory
-    logging.debug("I'm about to load.")
-    LocalFileCredentialRepo()
-    logging.debug("Load credentials complete.")
-
-
-if MasterPasswordRepo().user_master_password == "":
+if master_pwd_usecase.has_master_pwd():
     def master_password_callback(passcode):
-        MasterPasswordRepo().save_master_password(passcode)
+        master_pwd_usecase.save_master_pwd(passcode)
 
     pop_dialog_to_ask_for_passcode(
         message=DIALOG_MESSAGE_INPUT_MASTER_PWD,
         positive_callable=master_password_callback
     )
 else:
-    thread = threading.Thread(target=_load_credentials)
-    thread.start()
+    load_credential_uc.invoke()
 
 
 factory_label_frame = tkinter.LabelFrame(root_window, text=PROMPT_FACTORY)
