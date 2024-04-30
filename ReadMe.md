@@ -8,17 +8,15 @@ This happens to the best of us, especially nowadays, when each person would have
 ## Forgot you password
 ![Password Rules](https://pbs.twimg.com/media/CMKb_QvUAAAZ2vH?format=png&name=small)
 
-I'm pretty sure this is not new to anyone, you **have to** create different passwords for different websites, plus remembering them - if you ever forget, then you'll have to reset your password. I once input incorrect password 3 times on an online banking website, my account was deactivated, then I **have to** ask other administrators of this business account to help re-activate my account, next I **have to** phone the bank help desk to reset my password.
+I'm sure this is not new to anyone, you **must** create different passwords for different websites, if you ever forgot, then you would have to reset your password.
 
-Sometimes you even forget your username! Is it an email? (Some minority websites do NOT accept email as username indeed.) Is it gmail or hotmail? Or maybe it's actually my mobile number?!
+**THIS IS SUCH A PAIN!**
 
-THIS IS SUCH A PAIN!
+I am not a fan of LastPass BTW, I'd rather save the password of some rarely-used accounts on cloud notes and then encrypt the note - I can't explain why, I just don't like LastPass, I don't trust it either.
 
-I am not a fan of LastPass BTW, I'd rather save the password of some rarely-used accounts on cloud notes and then encrypt the note - I can't explain why, I just don't like LastPass.
+Chrome and Safari do help, but which one did you save the password into? Also, as a developer, I have more than 3 Google accounts and more than 3 Apple accounts, it becomes messy when you save some passwords in this browser and save some others in another browser.
 
-Chrome and Safari do can help, but which one did you save the password into? Also, as a developer, I have more than 3 Google accounts and more than 3 Apple accounts. What if you want to clear all passwords from your browser?
-
-Just recently, I found it's extremely easy to make a desktop App via Python, so here it is, **Passcode Warehouse**, the local, offline version of LastPass, your passwords are saved on your local machine, not cloud.
+Then I found it's extremely easy to make a desktop App via Python, so here comes a good opportunity to practice, **PasscodeBin**, the local, offline version of LastPass, your passwords are saved on your local machine, not cloud.
 
 
 # Passcode Warehouse
@@ -41,6 +39,26 @@ Passwords will be encrypted before saving into file, here is an example:
 
 ## Download
 PasscodeBin for macOS [version 1.4](https://drive.google.com/file/d/1jsW3kC1KSADQb4YESpr-BwYjRb2pKhcI/view), have tested and works fine on macOS Sonoma 14.2.
+
+
+## How to package a python project
+#### Create the setup.py file
+py2applet --make-setup launcher.py
+
+### Include resources as data_files in your setup.py
+https://stackoverflow.com/a/13146204/4837103
+
+#### Clean up your build directories
+rm -rf build dist
+
+#### Development with alias mode
+python setup.py py2app -A
+
+#### Run the application
+./dist/launcher.app/Contents/MacOS/launcher
+
+#### Deploy the App
+python setup.py py2app
 
 # Read More
 [Password rules are bullshit](https://blog.codinghorror.com/password-rules-are-bullshit/)
