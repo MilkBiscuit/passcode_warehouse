@@ -1,5 +1,11 @@
 # Why making this program
 
+## Forgot your username
+Have you ever experienced this frustration: One day you created a new account on Medium just to read a specific article or download a resource file. Several days, weeks, or even months later, you want to log in again. But wait, which email or username did I use to register? Was it my mobile number, Gmail, Hotmail, or even my Apple ID? I can't remember at all, and now I need to check if they provide a 'find username' option.
+
+This happens to the best of us, especially nowadays, when each person would have tens or even hundreds of online accounts.
+
+## Forgot you password
 ![Password Rules](https://pbs.twimg.com/media/CMKb_QvUAAAZ2vH?format=png&name=small)
 
 I'm pretty sure this is not new to anyone, you **have to** create different passwords for different websites, plus remembering them - if you ever forget, then you'll have to reset your password. I once input incorrect password 3 times on an online banking website, my account was deactivated, then I **have to** ask other administrators of this business account to help re-activate my account, next I **have to** phone the bank help desk to reset my password.
