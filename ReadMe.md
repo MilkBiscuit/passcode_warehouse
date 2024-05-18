@@ -55,7 +55,7 @@ rm -rf build dist
 python setup.py py2app -A
 
 #### Run the application
-./dist/launcher.app/Contents/MacOS/launcher
+./dist/PasscodeBin.app/Contents/MacOS/PasscodeBin
 
 #### Deploy the App
 python setup.py py2app
